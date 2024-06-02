@@ -1,11 +1,9 @@
 json.extract! user, :id, :first_name, :last_name, :email, :phone_number, :password_digest, :seller
-json.created_at user.created_at.in_time_zone('Central Time (US & Canada)').strftime('%m-%d-%Y %I:%M %p %Z')
-json.updated_at user.updated_at.in_time_zone('Central Time (US & Canada)').strftime('%m-%d-%Y %I:%M %p %Z')
-
+json.created_at format_timestamp(user.created_at)
+json.updated_at format_timestamp(user.updated_at)
 
 json.shops user.shops do |shop|
-  json.extract! shop, :id, :shop_name, :description, :image, :user_id
-  json.created_at shop.created_at.in_time_zone('Central Time (US & Canada)').strftime('%m-%d-%Y %I:%M %p %Z')
-  json.updated_at shop.updated_at.in_time_zone('Central Time (US & Canada)').strftime('%m-%d-%Y %I:%M %p %Z')
+  json.extract! shop, :id, :shop_name, :description, :image, :user_id, :created_at, :updated_at
+  json.created_at format_timestamp(shop.created_at)
+  json.updated_at format_timestamp(shop.updated_at)
 end
-
