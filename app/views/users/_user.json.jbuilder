@@ -4,11 +4,8 @@ json.updated_at user.updated_at.in_time_zone('Central Time (US & Canada)').strft
 
 
 json.shops user.shops do |shop|
-  json.id shop.id
-  json.shop_name shop.shop_name
-  json.description shop.description
-  json.image shop.image
-  json.user_id shop.user_id
+  json.extract! shop, :id, :shop_name, :description, :image, :user_id
   json.created_at shop.created_at.in_time_zone('Central Time (US & Canada)').strftime('%m-%d-%Y %I:%M %p %Z')
   json.updated_at shop.updated_at.in_time_zone('Central Time (US & Canada)').strftime('%m-%d-%Y %I:%M %p %Z')
 end
+
