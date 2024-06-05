@@ -15,10 +15,10 @@ class ProductsController < ApplicationController
   end
 
   def create
-    @product = Product.new(product_params)
-
+    @product = current_user.products.build(product_params)
     if @product.save
-      render :show
+      @product.shops = Shop.where(id: shop_ids) if shop_ids.present?
+      render :show, status: :created
     else
       render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
     end
@@ -28,6 +28,7 @@ class ProductsController < ApplicationController
     @product = Product.find_by(id: params[:id])
 
     if @product.update(product_params)
+      @product.shops = Shop.where(id: shop_ids) if shop_ids.present?
       render :show
     else
       render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
@@ -48,6 +49,10 @@ class ProductsController < ApplicationController
   private
 
   def product_params
-    params.permit(:id, :product_name, :price, :description, :quantity)
+    params.permit(:product_name, :price, :description, :quantity, shop_ids: [])
+  end
+
+  def shop_ids
+    params[:shop_ids] || []
   end
 end
