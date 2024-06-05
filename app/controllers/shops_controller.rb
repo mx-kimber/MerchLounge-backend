@@ -1,13 +1,16 @@
 class ShopsController < ApplicationController
-  
+  before_action :authenticate_user
+  before_action :set_shop, only: [:show]
+  before_action :set_shop_for_owner, only: [:update, :destroy]
+
   def index
-    @shops = Shop.all
+    @shops = current_user.shops
     render :index
   end
 
   def show
-    @shop = Shop.find_by(id: params[:id])
     if @shop
+      @products = @shop.products
       render :show
     else
       render json: { error: "Shop not found" }, status: :not_found
@@ -15,7 +18,7 @@ class ShopsController < ApplicationController
   end
 
   def create
-    @shop = Shop.new(shop_params)
+    @shop = current_user.shops.build(shop_params)
 
     if @shop.save
       render :show, status: :created
@@ -25,8 +28,6 @@ class ShopsController < ApplicationController
   end
 
   def update
-    @shop = Shop.find_by(id: params[:id])
-
     if @shop.update(shop_params)
       render :show
     else
@@ -35,8 +36,6 @@ class ShopsController < ApplicationController
   end
 
   def destroy
-    @shop = Shop.find_by(id: params[:id])
-
     if @shop
       @shop.destroy
       render json: { message: "Shop destroyed successfully" }
@@ -47,7 +46,18 @@ class ShopsController < ApplicationController
 
   private
 
+  def set_shop
+    @shop = Shop.find_by(id: params[:id])
+  end
+
+  def set_shop_for_owner
+    @shop = current_user.shops.find_by(id: params[:id])
+    unless @shop
+      render json: { error: "Shop not found or you are not authorized to perform this action" }, status: :not_found
+    end
+  end
+
   def shop_params
-    params.permit(:user_id, :shop_name, :description, :image)
+    params.permit(:shop_name, :description, :image)
   end
 end
