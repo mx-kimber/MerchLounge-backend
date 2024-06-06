@@ -1,12 +1,14 @@
 class ProductsController < ApplicationController
-  
+  before_action :authenticate_user, except: [:index, :show]
+  before_action :set_product, only: [:show, :update, :destroy]
+  before_action :authorize_shop_owner, only: [:update, :destroy]
+
   def index
     @products = Product.all
     render :index
   end
 
   def show
-    @product = Product.find_by(id: params[:id])
     if @product
       render :show
     else
@@ -25,8 +27,6 @@ class ProductsController < ApplicationController
   end
 
   def update
-    @product = Product.find_by(id: params[:id])
-
     if @product.update(product_params)
       @product.shops = Shop.where(id: shop_ids) if shop_ids.present?
       render :show
@@ -36,8 +36,6 @@ class ProductsController < ApplicationController
   end
 
   def destroy
-    @product = Product.find_by(id: params[:id])
-
     if @product
       @product.destroy
       render json: { message: "Product destroyed successfully" }
@@ -47,6 +45,16 @@ class ProductsController < ApplicationController
   end
 
   private
+
+  def set_product
+    @product = Product.find_by(id: params[:id])
+  end
+
+  def authorize_shop_owner
+    unless @product && @product.user == current_user
+      render json: { error: "You are not authorized to perform this action" }, status: :forbidden
+    end
+  end
 
   def product_params
     params.permit(:product_name, :price, :description, :quantity, shop_ids: [])

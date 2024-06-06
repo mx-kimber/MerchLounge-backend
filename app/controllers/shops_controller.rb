@@ -1,10 +1,10 @@
 class ShopsController < ApplicationController
-  before_action :authenticate_user
-  before_action :set_shop, only: [:show]
-  before_action :set_shop_for_owner, only: [:update, :destroy]
+  before_action :authenticate_user, except: [:index, :show]
+  before_action :set_shop, only: [:show, :update, :destroy]
+  before_action :authorize_shop_owner, only: [:update, :destroy]
 
   def index
-    @shops = current_user.shops
+    @shops = Shop.all
     render :index
   end
 
@@ -50,10 +50,10 @@ class ShopsController < ApplicationController
     @shop = Shop.find_by(id: params[:id])
   end
 
-  def set_shop_for_owner
+  def authorize_shop_owner
     @shop = current_user.shops.find_by(id: params[:id])
     unless @shop
-      render json: { error: "Shop not found or you are not authorized to perform this action" }, status: :not_found
+      render json: { error: "Shop not found or you are not authorized to perform this action" }, status: :forbidden
     end
   end
 
