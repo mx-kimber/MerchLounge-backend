@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
+  before_action :authenticate_user
   before_action :set_user, only: [:show, :update, :destroy]
+  before_action :authorize_user, only: [:update, :destroy]
 
   def index
     @users = User.all
@@ -43,6 +45,16 @@ class UsersController < ApplicationController
 
   private
 
+  def set_user
+    @user = User.find_by(id: params[:id])
+  end
+
+  def authorize_user
+    unless @user == current_user
+      render json: { error: "You are not authorized to perform this action" }, status: :forbidden
+    end
+  end
+
   def user_params
     params.permit(
       :first_name,
@@ -53,9 +65,5 @@ class UsersController < ApplicationController
       :password_confirmation,
       :seller
     )
-  end
-
-  def set_user
-    @user = User.find_by(id: params[:id])
   end
 end
