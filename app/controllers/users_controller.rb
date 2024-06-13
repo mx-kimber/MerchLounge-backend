@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user
-  before_action :set_user, only: [:show, :update, :destroy]
-  before_action :authorize_user, only: [:update, :destroy]
+  before_action :authenticate_user, only: [:update, :destroy]
+  before_action :current_user, only: [:show, :update, :destroy]
+
 
   def index
     @users = User.all
@@ -9,10 +9,11 @@ class UsersController < ApplicationController
   end
 
   def show
-    if @user
+    if current_user
+      @user = current_user
       render :show
     else
-      render json: { error: "User not found" }, status: :not_found
+      render json: { error: "Unauthorized access" }, status: :unauthorized
     end
   end
 
@@ -45,15 +46,11 @@ class UsersController < ApplicationController
 
   private
 
-  def set_user
-    @user = User.find_by(id: params[:id])
-  end
-
-  def authorize_user
-    unless @user == current_user
-      render json: { error: "You are not authorized to perform this action" }, status: :forbidden
-    end
-  end
+  # def authorize_user
+  #   unless @user == current_user
+  #     render json: { error: "You are not authorized to perform this action" }, status: :forbidden
+  #   end
+  # end
 
   def user_params
     params.permit(
