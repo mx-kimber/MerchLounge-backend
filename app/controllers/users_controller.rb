@@ -28,7 +28,8 @@ class UsersController < ApplicationController
   end
 
   def update
-    if @user.update(user_params)
+    if @user = current_user
+    @user.update(user_params)
       render :show
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
@@ -36,7 +37,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    if @user
+    if @user = current_user
       @user.destroy
       render json: { message: "User destroyed successfully" }
     else
