@@ -2,7 +2,6 @@ class UsersController < ApplicationController
   before_action :authenticate_user, only: [:update, :destroy]
   before_action :current_user, only: [:show, :update, :destroy]
 
-
   def index
     @users = User.all
     render :index
@@ -29,7 +28,7 @@ class UsersController < ApplicationController
 
   def update
     if @user = current_user
-    @user.update(user_params)
+      @user.update(user_params)
       render :show
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
@@ -39,19 +38,13 @@ class UsersController < ApplicationController
   def destroy
     if @user = current_user
       @user.destroy
-      render json: { message: "User destroyed successfully" }
+      render json: { message: "User and associated shops destroyed successfully" }
     else
       render json: { error: "User not found" }, status: :not_found
     end
   end
 
   private
-
-  # def authorize_user
-  #   unless @user == current_user
-  #     render json: { error: "You are not authorized to perform this action" }, status: :forbidden
-  #   end
-  # end
 
   def user_params
     params.permit(
