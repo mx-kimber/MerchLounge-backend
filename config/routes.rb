@@ -10,6 +10,10 @@ Rails.application.routes.draw do
   
   post "/sessions" => "sessions#create"
   resources :users
-  resources :products
-  resources :shops
+  
+  resources :shops do
+    resources :products, only: [:index]
+  end
+
+  resources :products, only: [:show, :create, :update, :destroy]
 end

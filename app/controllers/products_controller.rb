@@ -4,10 +4,20 @@ class ProductsController < ApplicationController
   before_action :authorize_shop_owner, only: [:update, :destroy]
   before_action :current_user
 
-  def index
+ # app/controllers/products_controller.rb
+# def index
+#   @products = Product.includes(:shops).all
+#   render json: @products.to_json(include: :shops)
+# end
+
+def index
+  if params[:shop_id]
+    @products = Product.joins(:products_shops).where(products_shops: { shop_id: params[:shop_id] })
+  else
     @products = Product.all
-    render :index
   end
+  render json: @products
+end
 
   def show
     if @product

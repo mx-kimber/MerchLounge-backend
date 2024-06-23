@@ -9,13 +9,10 @@ class ShopsController < ApplicationController
   end
 
   def show
-    if @shop
-      @products = @shop.products
-      render :show
-    else
-      render json: { error: "Shop not found" }, status: :not_found
-    end
+    @shop = Shop.find(params[:id])
+    render json: @shop
   end
+
 
   def create
     @shop = current_user.shops.build(shop_params)
