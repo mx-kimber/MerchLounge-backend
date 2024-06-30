@@ -12,12 +12,15 @@ class ProductsController < ApplicationController
     else
       @products = Product.joins(:products_shops).distinct
     end
-    render json: @products
+
+    render json: @products.as_json(include: { shops: { only: [:id, :shop_name, :description] } })
   end
 
   def show
     if @product
-      render :show
+      render json: @product.as_json(only: [:id, :product_name, :description, :price, :quantity, :user_id], 
+        methods: [:created_at, :updated_at],
+        include: { shops: { only: [:id, :shop_name, :description] } })
     else
       render json: { error: "Product not found" }, status: :not_found
     end
