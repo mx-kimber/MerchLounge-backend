@@ -9,11 +9,16 @@ Rails.application.routes.draw do
   root "products#index"
   
   post "/sessions" => "sessions#create"
-  resources :users
+  resources :users do
+    member do
+      patch 'change_password', to: 'users#change_password'
+      patch 'change_email', to: 'users#change_email'
+    end
+  end
   
   resources :shops do
-    resources :products, only: [:index]
+    resources :products, only: [:index]  # Nested route for products under shops
   end
-
-  resources :products, only: [:show, :create, :update, :destroy]
+  
+  resources :products  # Resourceful route for products
 end
