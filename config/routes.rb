@@ -20,5 +20,7 @@ Rails.application.routes.draw do
     resources :products, only: [:index]  # Nested route for products under shops
   end
   
-  resources :products  # Resourceful route for products
+  resources :products
+
+  resources :images
 end

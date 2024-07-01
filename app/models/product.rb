@@ -1,6 +1,7 @@
 class Product < ApplicationRecord
   belongs_to :user
   has_and_belongs_to_many :shops
+  has_many :product_images, dependent: :destroy
 
   validates :product_name, presence: true
   validates :price, presence: true, numericality: { greater_than: 0 }
