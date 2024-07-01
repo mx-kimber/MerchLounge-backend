@@ -20,7 +20,9 @@ Rails.application.routes.draw do
     resources :products, only: [:index]
   end
   
-  resources :products
+  resources :products do
+    resources :product_images
+end
 
   resources :product_images 
 
