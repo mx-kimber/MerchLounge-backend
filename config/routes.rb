@@ -17,10 +17,11 @@ Rails.application.routes.draw do
   end
   
   resources :shops do
-    resources :products, only: [:index]  # Nested route for products under shops
+    resources :products, only: [:index]
   end
   
   resources :products
 
-  resources :images
+  resources :product_images 
+
 end

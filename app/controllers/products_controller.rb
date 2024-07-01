@@ -6,21 +6,27 @@ class ProductsController < ApplicationController
 
   def index
     if params[:user_id]
-      @products = Product.where(user_id: params[:user_id])
+      @products = Product.where(user_id: params[:user_id]).includes(:product_images, :shops)
     elsif params[:shop_id]
-      @products = Product.joins(:products_shops).where(products_shops: { shop_id: params[:shop_id] })
+      @products = Product.joins(:products_shops).where(products_shops: { shop_id: params[:shop_id] }).includes(:product_images, :shops)
     else
-      @products = Product.joins(:products_shops).distinct
+      @products = Product.joins(:products_shops).distinct.includes(:product_images, :shops)
     end
 
-    render json: @products.as_json(include: { shops: { only: [:id, :shop_name, :description] } })
+    render json: @products.as_json(include: {
+      shops: { only: [:id, :shop_name, :description] },
+      product_images: { only: [:id, :image_url, :created_at, :updated_at] }
+    })
   end
 
   def show
     if @product
       render json: @product.as_json(only: [:id, :product_name, :description, :price, :quantity, :user_id], 
         methods: [:created_at, :updated_at],
-        include: { shops: { only: [:id, :shop_name, :description] } })
+        include: {
+          shops: { only: [:id, :shop_name, :description] },
+          product_images: { only: [:id, :image_url, :created_at, :updated_at] }
+        })
     else
       render json: { error: "Product not found" }, status: :not_found
     end
