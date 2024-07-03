@@ -70,3 +70,5 @@ end
 
 gem 'jwt'
 gem "rack-cors"
+gem 'cloudinary'
+gem 'figaro'
