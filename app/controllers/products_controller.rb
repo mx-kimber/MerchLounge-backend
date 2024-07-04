@@ -15,7 +15,7 @@ class ProductsController < ApplicationController
 
     render json: @products.as_json(include: {
       shops: { only: [:id, :shop_name, :description] },
-      product_images: { only: [:id, :image_url, :created_at, :updated_at] }
+      product_images: { only: [:id, :cloudinary_photo, :created_at, :updated_at] }
     })
   end
 
@@ -25,7 +25,7 @@ class ProductsController < ApplicationController
         methods: [:created_at, :updated_at],
         include: {
           shops: { only: [:id, :shop_name, :description] },
-          product_images: { only: [:id, :image_url, :created_at, :updated_at] }
+          product_images: { only: [:id, :cloudinary_photo, :created_at, :updated_at] }
         })
     else
       render json: { error: "Product not found" }, status: :not_found

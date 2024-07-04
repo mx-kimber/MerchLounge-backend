@@ -1,3 +1,5 @@
+# config/routes.rb
+
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -22,8 +24,8 @@ Rails.application.routes.draw do
   
   resources :products do
     resources :product_images
-end
+  end
 
   resources :product_images 
-
+  post '/upload_image', to: 'product_images#upload_image'
 end
